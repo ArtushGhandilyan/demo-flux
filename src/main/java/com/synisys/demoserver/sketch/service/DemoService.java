@@ -64,26 +64,16 @@ public class DemoService {
 
 			List<UserInfo> users = userDataList.stream()
 					.filter(userData -> userData.getCompanyId().equals(companyData.getId()))
-					.map(userData -> new UserInfo(userData.getName(), userData.getRole(), userData.getStartDate()))
+					.map(userData -> {
+						Address userAddress = addressService.getAddressById(userData.getAddressId()).block();
+						return new UserInfo(userData.getName(), userData.getRole(), userData.getStartDate(), userAddress.toString());
+					})
 					.collect(Collectors.toList());
 
 			companyInfoList.add(new CompanyInfo(companyData.getName(), users, address));
 		}
 
 		return companyInfoList;
-	}
-
-	class Temp {
-		public CompletableFuture<Address> addressCompletableFuture;
-		public CompletableFuture<List<UserInfo>> listCompletableFuture;
-		public CompanyData companyData;
-
-		public Temp(CompletableFuture<Address> addressCompletableFuture,
-				CompletableFuture<List<UserInfo>> listCompletableFuture, CompanyData companyData) {
-			this.addressCompletableFuture = addressCompletableFuture;
-			this.listCompletableFuture = listCompletableFuture;
-			this.companyData = companyData;
-		}
 	}
 
 	public List<CompanyInfo> getCompaniesCF() {
@@ -102,6 +92,15 @@ public class DemoService {
 					.whenComplete((address, throwable) -> {
 						companyInfo.setAddress(address);
 					});
+
+			List<UserInfo> userInfoList = new ArrayList<>();
+			userService.getUsers().collectList().toFuture().whenComplete((userData, throwable) -> {
+				userData.forEach(ud -> {
+					addressService.getAddressById(ud.getAddressId()).toFuture().whenComplete((address, throwable1) -> {
+						userInfoList.add(new UserInfo(ud.getName(), ud.getRole(), ud.getStartDate(), address.toString()));
+					});
+				});
+			});
 
 			CompletableFuture<List<UserInfo>> listCompletableFuture = userService
 					.getUsersByCompanyId(companyData.getId())

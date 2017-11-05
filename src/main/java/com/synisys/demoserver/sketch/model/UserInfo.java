@@ -12,6 +12,12 @@ public class UserInfo {
 	Date startDate;
 	String address;
 
+	public UserInfo(String name, String role, Date startDate) {
+		this.name = name;
+		this.role = role;
+		this.startDate = startDate;
+	}
+
 	public UserInfo(String name, String role, Date startDate, String address) {
 		this.name = name;
 		this.role = role;
