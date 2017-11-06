@@ -31,9 +31,9 @@ public class TestController {
 	public Flux<TestModel> stream() {
 		return Flux.range(1, 1000)
 				.delayElements(Duration.ofMillis(10))
-				.log()
+//				.log()
 				.map(TestModel::new)
-				.subscribeOn(Schedulers.elastic());
+				/*.subscribeOn(Schedulers.newElastic("my-sub")).publishOn(Schedulers.newElastic("my-pub"))*/;
 	}
 
 	@GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,3 +57,8 @@ public class TestController {
 		return result;
 	}
 }
+
+
+
+//docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:rw --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --volume=/dev/disk/:/dev/disk:ro --publish=8080:8080 --detach=true --name=cadvisor google/cadvisor:latest
+//docker run --publish=8070:8080 --detach=true --name=cadvisor google/cadvisor:latest
