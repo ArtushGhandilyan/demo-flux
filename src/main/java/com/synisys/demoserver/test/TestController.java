@@ -30,19 +30,29 @@ public class TestController {
 	@GetMapping(value = "/stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
 	public Flux<TestModel> stream() {
 		return Flux.range(1, 1000)
-				.delayElements(Duration.ofMillis(10))
-//				.log()
-				.map(TestModel::new)
-				/*.subscribeOn(Schedulers.newElastic("my-sub")).publishOn(Schedulers.newElastic("my-pub"))*/;
+				.map(integer -> {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					return integer;
+				})
+				.map(TestModel::new);
 	}
 
 	@GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<TestModel> list() {
 		return Flux.range(1, 1000)
-				.delayElements(Duration.ofMillis(10))
-//				.log()
-				.map(TestModel::new)/*
-				.subscribeOn(Schedulers.elastic())*/;
+				.map(integer -> {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					return integer;
+				})
+				.map(TestModel::new);
 	}
 
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,7 +61,6 @@ public class TestController {
 		List<TestModel> result = new ArrayList<>();
 		for (int i = 0; i < 1000; i++) {
 			Thread.sleep(10);
-//			System.out.println(Thread.currentThread().getName());
 			result.add(new TestModel(i));
 		}
 		return result;

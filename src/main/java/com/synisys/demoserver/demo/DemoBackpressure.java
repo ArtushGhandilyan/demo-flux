@@ -17,9 +17,9 @@ public class DemoBackpressure {
 	public static void main(String[] args)
 			throws InterruptedException {
 
-//		invokeFastConsumer();
+		invokeFastConsumer();
 
-		invokeSlowConsumer();
+//		invokeSlowConsumer();
 
 		Thread.sleep(30000L);
 	}
@@ -82,7 +82,7 @@ public class DemoBackpressure {
 		return Flux.range(1, 100).map(integer -> {
 			System.out.println("do expensive operation...");
 			return integer;
-		}).publishOn(Schedulers.newElastic("pub"), 2);
+		})/*.publishOn(Schedulers.newElastic("pub"))*/;
 	}
 
 }
